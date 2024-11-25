@@ -16,6 +16,8 @@ def main():
         print("Initialized git directory")
     elif command == "cat-file":
         object_read()
+    elif command == "hash-object":
+        object_write(sys.argv[3])
     else:
         raise RuntimeError(f"Unknown command #{command}")
 
@@ -31,7 +33,9 @@ def object_read():
                 content = zlib.decompress(compressed_content)
                 result = content.decode("utf-8").split("\x00")
                 output.write(result[1])
-    
+
+def object_write(content_path):
+    print(open(content_path, "rt"))
 
 
 if __name__ == "__main__":
