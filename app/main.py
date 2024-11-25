@@ -35,7 +35,11 @@ def object_read():
                 output.write(result[1])
 
 def object_write(content_path):
-    print(open(content_path, "rt"))
+    with open(content_path, "rt") as f:
+        newcontent = f.read()
+        print(newcontent)
+
+    
 
 
 if __name__ == "__main__":
