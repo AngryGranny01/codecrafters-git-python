@@ -130,11 +130,11 @@ def recursive_tree_hash_generation(startPath):
     for entry in sorted(os.listdir(startPath)):
         entry_path = os.path.join(startPath, entry)
         if entry_path == "./.git":
-            print(entry_path)
+            continue
         elif os.path.isfile(entry_path):          
             uncompressed_blob = create_blub(entry_path)
             # Compute hash
-            sha1 = hashlib.sha1(uncompressed_blob).hexdigest()
+            sha1 = zlib(uncompressed_blob)
             mode = REGULAR_FILE
         elif os.path.isdir(entry_path):
             sha1 = recursive_tree_hash_generation(entry_path)
