@@ -9,7 +9,7 @@ output = sys.stdout
 REGULAR_FILE = 100644
 EXEC_FILE = 100755
 SYMBOLIC_LINK = 120000
-DIRECTORIES = 40000
+DIRECTORY = 40000
 
 def main():
     command = sys.argv[1]
@@ -127,9 +127,9 @@ def write_tree_handler(directory):
             uncompressed_blob = create_blub(entry_path)
             # Compute hash
             compressed_blob = hashlib.sha1(uncompressed_blob).hexdigest()
-            print(compressed_blob)
+            tree_entries.append(compressed_blob)
         elif os.path.isdir(entry_path):
-            print("do directory stuff")
+            create_tree_hash()
         else:
             continue # Skip unsupported entries
     return
@@ -141,6 +141,27 @@ def create_blub(blub_path):
         blob_content = f.read()
         blob_object = b'blob '+str(len(blob_content)).encode()+b'\x00' + bytes(blob_content,"utf-8")
         return blob_object
+
+def recursive_tree_hash_generation(startPath):
+    tree_entries = []
+    for entry in sorted(os.listdir(startPath)):
+        entry_path = os.path.join(startPath, entry)
+
+        if os.path.isfile(entry_path):          
+            uncompressed_blob = create_blub(entry_path)
+            # Compute hash
+            sha1 = hashlib.sha1(uncompressed_blob).hexdigest()
+            mode = REGULAR_FILE
+        elif os.path.isdir(entry_path):
+            sha1 = recursive_tree_hash_generation(entry_path)
+            mode = DIRECTORY
+        else:
+            continue # Skip unsupported entries
+        tree_entries.append(f"{mode} {entry}\0".encode() + bytes.fromhex(sha1))
+    
+    # create the tree object
+    tree_data = b"".join(tree_entries)
+    print(tree_data)
 
 if __name__ == "__main__":
     main()
