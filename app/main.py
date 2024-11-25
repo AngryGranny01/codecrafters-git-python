@@ -29,7 +29,7 @@ def object_read():
                 compressed_content = f.read()
 
                 content = zlib.decompress(compressed_content)
-                result = content.decode("utf-8")
+                result = content.decode("utf-8").split("\x00")
                 print(result)
     
 
