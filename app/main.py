@@ -79,7 +79,6 @@ def read_tree(content_path):
 
     print(tree_body)
     content_of_tree = []
-    while
     
 
 if __name__ == "__main__":
