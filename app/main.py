@@ -51,9 +51,7 @@ def cat_file_handler():
                 output.write(result[1])
 
 def hash_object_handler(content_path):
-    with open(content_path, "rt") as f:
-        newcontent = f.read()
-        uncompressed_content = b'blob ' + str(len(newcontent)).encode() + b'\x00' + bytes(newcontent, "utf-8")
+        uncompressed_content = create_blub(content_path)
         # Compute hash
         compressed_content = hashlib.sha1(uncompressed_content).hexdigest()
         print(compressed_content)
@@ -128,7 +126,7 @@ def write_tree_handler(directory):
         if os.path.isfile(entry_path):
             with open(entry_path, "rt") as f:
                 blob_content = f.read()
-                blob_object = "blob "+str(len(blob_content))+"\0"+blob_content
+                blob_object = b'blob '+str(len(blob_content))+b'\x00' + blob_content
                 print(blob_object)
         elif os.path.isdir(entry_path):
             print("do directory stuff")
@@ -137,6 +135,13 @@ def write_tree_handler(directory):
     return
     #tree_entries.append(tree_entry)
     #return hash_object(b''.join(tree_entries), 'tree')
+
+def create_blub(blub_path):
+    with open(blub_path, "rt") as f:
+        blob_content = f.read()
+        blob_object = b'blob '+str(len(blob_content)).encode()+b'\x00' + bytes(blob_content,"utf-8")
+        print(blob_object)
+        return blob_object
 
 if __name__ == "__main__":
     main()
