@@ -44,7 +44,7 @@ def object_write(content_path):
         print(compressed_content)
         if compressed_content:
             newPath = '.git/objects/'+str(compressed_content[:2])+'/'+str(compressed_content[2:])
-            print(newPath)
+            os.mkdir(newPath)
 
 
     
