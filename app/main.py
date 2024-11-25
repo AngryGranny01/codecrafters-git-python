@@ -121,12 +121,12 @@ def recursive_read_tree_body(tree_body, entries):
     recursive_read_tree_body(tree_body[20:], entries)
 
 def test():
-    for root, dirs, files in os.walk('.git'):
-        for file in files:
-            file_path = os.path.join(root, file)
-        
-            with open(file_path, "rb") as f:
-                compressed_content = f.read()
+    # Construct the Git object path
+    git_object_path = os.path.join('.git','index')
+    
+    # Read the compressed Git object
+    with open(git_object_path, "rb") as f:
+        compressed_data = f.read()
     
 
 if __name__ == "__main__":
