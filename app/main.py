@@ -1,3 +1,4 @@
+import hashlib
 import sys
 import os
 import zlib
@@ -38,8 +39,8 @@ def object_write(content_path):
     with open(content_path, "rt") as f:
         newcontent = f.read()
         uncompressed_content = b'blob ' + str(len(newcontent)).encode() + b'\x00' + bytes(newcontent, "utf-8")
-        print(uncompressed_content)
-        compressed_content = zlib.compress(uncompressed_content)
+        # Compute hash
+        compressed_content = hashlib.sha1(uncompressed_content).hexdigest()
         print(compressed_content)
 
 
