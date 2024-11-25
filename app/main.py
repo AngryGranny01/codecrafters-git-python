@@ -32,6 +32,8 @@ def main():
         else:
             for entry in tree:
                 print(f"Mode: {entry['mode']}, Name: {entry['name']}, SHA1: {entry['sha1']}")
+    elif command == "write-tree":
+        print(sys.argv[3])
     else:
         raise RuntimeError(f"Unknown command #{command}")
 
