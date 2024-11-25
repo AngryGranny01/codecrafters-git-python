@@ -72,10 +72,14 @@ def read_tree(content_path):
     tree_header = decompressed_tree[:null_byte_index]
     tree_body = decompressed_tree[null_byte_index+1:]
     
-   
+
     object_type, object_size = tree_header.decode().split()
+    #Print Header of Tree
     tree_header_string = f"Object Type: {object_type}, Size: {object_size}"
-    print(tree_header_string)
+
+    print(tree_body)
+    content_of_tree = []
+    while
     
 
 if __name__ == "__main__":
