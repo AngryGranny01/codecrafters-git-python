@@ -28,7 +28,7 @@ def main():
             for entry in tree:
                 print(f"Mode: {entry['mode']}, Name: {entry['name']}, SHA1: {entry['sha1']}")
     elif command == "write-tree":
-        write_tree_handler(".")
+        recursive_tree_hash_generation(".")
     else:
         raise RuntimeError(f"Unknown command #{command}")
 
@@ -119,25 +119,6 @@ def recursive_read_tree_body(tree_body, entries):
     # Recursively process the rest of the tree body
     recursive_read_tree_body(tree_body[20:], entries)
 
-def write_tree_handler(directory):
-    tree_entries = []
-    for entry in sorted(os.listdir(directory)):
-        entry_path = os.path.join(directory, entry)
-
-        if os.path.isfile(entry_path):          
-            uncompressed_blob = create_blub(entry_path)
-            # Compute hash
-            compressed_blob = hashlib.sha1(uncompressed_blob).hexdigest()
-            tree_entries.append(compressed_blob)
-        elif os.path.isdir(entry_path):
-            if entry_path != "./.git":
-                recursive_tree_hash_generation(entry_path)
-        else:
-            continue # Skip unsupported entries
-    return
-    #tree_entries.append(tree_entry)
-    #return hash_object(b''.join(tree_entries), 'tree')
-
 def create_blub(blub_path):
     with open(blub_path, "rt") as f:
         blob_content = f.read()
@@ -163,7 +144,6 @@ def recursive_tree_hash_generation(startPath):
         tree_entries.append(f"{mode} {entry}\0".encode() + bytes.fromhex(sha1))
     
     # create the tree object
-    print(tree_entries)
     tree_data = b"".join(tree_entries)
     print(tree_data)
 
