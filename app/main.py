@@ -61,7 +61,7 @@ def blub_write(content_path):
                     f.write(zlib.compress(uncompressed_content))
 
 def read_tree(content_path):
-    path = os.path.join(directory_objects_path,content_path)
+    path = os.path.join(directory_objects_path,content_path[0:2],content_path[2:])
     print(path)
     for root, dirs, files in os.walk(path):
         for file in files:
