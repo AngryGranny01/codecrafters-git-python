@@ -67,7 +67,7 @@ def read_tree(content_path):
         compressed_data = f.read()
 
     decompressed_tree = zlib.decompress(compressed_data)
-    tree_content = str(decompressed_tree,"utf-8").split("\x00")
+    tree_content = decompressed_tree.split("\x00")
     print(tree_content)
     
 
