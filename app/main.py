@@ -21,9 +21,9 @@ def main():
             f.write("ref: refs/heads/main\n")
         print("Initialized git directory")
     elif command == "cat-file":
-        blub_read()
+        cat_file_handler()
     elif command == "hash-object":
-        blub_write(sys.argv[3])
+        hash_object_handler(sys.argv[3])
     elif command == "ls-tree":
         tree = read_tree(sys.argv[3])
         if sys.argv[2] == "--name-only":
@@ -36,7 +36,7 @@ def main():
         raise RuntimeError(f"Unknown command #{command}")
 
 
-def blub_read():
+def cat_file_handler():
     for root, dirs, files in os.walk(directory_objects_path):
         for file in files:
             file_path = os.path.join(root, file)
@@ -48,7 +48,7 @@ def blub_read():
                 result = content.decode("utf-8").split("\x00")
                 output.write(result[1])
 
-def blub_write(content_path):
+def hash_object_handler(content_path):
     with open(content_path, "rt") as f:
         newcontent = f.read()
         uncompressed_content = b'blob ' + str(len(newcontent)).encode() + b'\x00' + bytes(newcontent, "utf-8")
@@ -88,14 +88,14 @@ def read_tree(content_path):
 
     # Parse the tree body
     entries = []  # List to store parsed tree entries
-    recursive_tree_body_create(tree_body, entries)
+    recursive_read_tree_body(tree_body, entries)
 
     # Sort entries after name
     entries.sort(key=lambda entry: entry['name'])
 
     return entries
 
-def recursive_tree_body_create(tree_body, entries):
+def recursive_read_tree_body(tree_body, entries):
     if len(tree_body) <= 1:  # Stop recursion when the tree body is exhausted
         return
 
@@ -116,7 +116,7 @@ def recursive_tree_body_create(tree_body, entries):
     entries.append({"mode": file_mode, "name": file_name, "sha1": sha1_hash})
 
     # Recursively process the rest of the tree body
-    recursive_tree_body_create(tree_body[20:], entries)
+    recursive_read_tree_body(tree_body[20:], entries)
 
 
     
