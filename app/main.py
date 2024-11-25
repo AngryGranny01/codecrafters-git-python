@@ -43,7 +43,7 @@ def object_write(content_path):
         compressed_content = hashlib.sha1(uncompressed_content).hexdigest()
         print(compressed_content)
         if compressed_content:
-            newPath = '.git/objects/'+str(compressed_content[:1])+'/'+str(compressed_content[1:])
+            newPath = '.git/objects/'+str(compressed_content[:2])+'/'+str(compressed_content[2:])
             print(newPath)
 
 
