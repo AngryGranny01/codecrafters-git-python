@@ -16,9 +16,8 @@ def main():
     else:
         raise RuntimeError(f"Unknown command #{command}")
 
-    for path, directories, files in os.walk(directory_objects_path):
-        if file in files:
-             print('found %s' % os.path.join(path, file))
+    for path, dirnames, filenames in os.walk('root'):
+        print('{} {} {}'.format(repr(path), repr(dirnames), repr(filenames)))
     output = sys.stdout
 
 
