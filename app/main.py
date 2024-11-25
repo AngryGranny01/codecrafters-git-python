@@ -127,8 +127,9 @@ def write_tree_handler(directory):
 
         if os.path.isfile(entry_path):
             with open(entry_path, "rt") as f:
-                newcontent = f.read()
-                print(newcontent)
+                blob_content = f.read()
+                blob_object = "blob "+str(len(blob_content))+"\0"+blob_content
+                print(blob_object)
         elif os.path.isdir(entry_path):
             print("do directory stuff")
         else:
