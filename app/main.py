@@ -13,10 +13,12 @@ def main():
         with open(".git/HEAD", "w") as f:
             f.write("ref: refs/heads/main\n")
         print("Initialized git directory")
+    elif command == "cat-file":
+        object_read()
+        output = sys.stdout
     else:
         raise RuntimeError(f"Unknown command #{command}")
-    object_read()
-    output = sys.stdout
+
 
 def object_read():
     for root, dirs, files in os.walk(directory_objects_path):
