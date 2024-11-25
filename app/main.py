@@ -123,11 +123,9 @@ def write_tree_handler(directory):
     for entry in sorted(os.listdir(directory)):
         entry_path = os.path.join(directory, entry)
 
-        if os.path.isfile(entry_path):
-            with open(entry_path, "rt") as f:
-                blob_content = f.read()
-                blob_object = b'blob '+str(len(blob_content)).encode()+b'\x00' + blob_content
-                print(blob_object)
+        if os.path.isfile(entry_path):          
+            blob = create_blub(entry_path)
+            print(blob)
         elif os.path.isdir(entry_path):
             print("do directory stuff")
         else:
