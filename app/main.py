@@ -123,7 +123,7 @@ def recursive_read_tree_body(tree_body, entries):
 def test():
     for entry in sorted(os.listdir(".")):
         entry_path = os.path.join(".", entry)
-    
+        print(entry_path)
 
 if __name__ == "__main__":
     main()
