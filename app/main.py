@@ -33,7 +33,7 @@ def main():
             for entry in tree:
                 print(f"Mode: {entry['mode']}, Name: {entry['name']}, SHA1: {entry['sha1']}")
     elif command == "write-tree":
-        print(test())
+        write_tree_handler(".")
     else:
         raise RuntimeError(f"Unknown command #{command}")
 
@@ -120,10 +120,20 @@ def recursive_read_tree_body(tree_body, entries):
     # Recursively process the rest of the tree body
     recursive_read_tree_body(tree_body[20:], entries)
 
-def test():
-    for entry in sorted(os.listdir(".")):
-        entry_path = os.path.join(".", entry)
-        print(entry_path)
+def write_tree_handler(directory):
+    tree_entries = []
+    for entry in sorted(os.listdir(directory)):
+        entry_path = os.path.join(directory, entry)
+
+        if os.path.isfile(entry_path):
+            print(entry_path)
+        elif os.path.isdir(entry_path):
+            print("do directory stuff")
+        else:
+            continue # Skip unsupported entries
+    return
+    #tree_entries.append(tree_entry)
+    #return hash_object(b''.join(tree_entries), 'tree')
 
 if __name__ == "__main__":
     main()
