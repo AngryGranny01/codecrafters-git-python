@@ -61,16 +61,13 @@ def blub_write(content_path):
                     f.write(zlib.compress(uncompressed_content))
 
 def read_tree(content_path):
-    path = os.path.join(directory_objects_path,content_path[0:2])
-    print(path)
-    for root, dirs, files in os.walk(path):
-        for file in files:
-            file_path = os.path.join(root, file)
-        
-            with open(file_path, "rb") as f:
-                compressed_content = f.read()
-                print(compressed_content) 
+    git_object_path = os.path.join(directory_objects_path,content_path[0:2],content_path[2:0])
+    
+    with open(git_object_path, "rb") as f:
+        compressed_data = f.read()
 
+    decompressed_tree = zlib.decompress(compressed_data)
+    print(decompressed_tree)
 
 if __name__ == "__main__":
     main()
