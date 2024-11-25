@@ -84,7 +84,7 @@ def read_tree(content_path):
     entries = []  # List to store parsed tree entries
     recursive_tree_body_create(tree_body, entries)
 
-    entries.sort(key=lambda entry: entry['mode'])
+    entries.sort(key=lambda entry: entry['name'])
 
     # Print the parsed entries in a readable format
     for entry in entries:
