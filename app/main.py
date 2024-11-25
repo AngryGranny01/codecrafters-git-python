@@ -29,7 +29,8 @@ def object_read():
                 compressed_content = f.read()
 
                 content = zlib.decompress(compressed_content)
-                print(content.split("\x00"))
+                result = content.split("\x00")
+                print(result)
     
 
 
