@@ -37,7 +37,7 @@ def object_read():
 def object_write(content_path):
     with open(content_path, "rt") as f:
         newcontent = f.read()
-        uncompressed_content = b'blob ' + str(len(newcontent)).encode() + b'\x00' + newcontent
+        uncompressed_content = b'blob ' + str(len(newcontent)).encode() + b'\x00' + bytes(newcontent)
         print(uncompressed_content)
         compressed_content = zlib.compress(uncompressed_content)
         print(compressed_content)
