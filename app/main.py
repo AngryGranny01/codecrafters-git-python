@@ -125,8 +125,9 @@ def test():
     git_object_path = os.path.join('.git','index')
     
     # Read the compressed Git object
-    with open(git_object_path, "rb") as f:
+    with open('.git') as f:
         compressed_data = f.read()
+        print(compressed_data)
     
 
 if __name__ == "__main__":
