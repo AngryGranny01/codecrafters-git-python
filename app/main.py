@@ -60,7 +60,7 @@ def blub_write(content_path):
                 with open(new_directory_path, 'wb') as f:
                     f.write(zlib.compress(uncompressed_content))
 
-def read_tree():
+def read_tree(content_path):
     with open(content_path, "rt") as f:
         newcontent = f.read()
         print(newcontent)
