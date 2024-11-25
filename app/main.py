@@ -43,7 +43,11 @@ def object_write(content_path):
         compressed_content = hashlib.sha1(uncompressed_content).hexdigest()
         print(compressed_content)
         if compressed_content:
-            blub_path=str(compressed_content[:2])+'/'+str(compressed_content[2:])
+            object_dir = os.path.join(directory_objects_path,compressed_content[0:2])
+            # Ensure the parent directory exists
+            os.makedirs(object_dir, exist_ok=True)
+
+            blub_path=str(compressed_content[0:2])+'/'+str(compressed_content[2:])
             new_directory_path = os.path.join(directory_objects_path, blub_path) 
             if not os.path.exists(new_directory_path):
                 with open(new_directory_path, 'wb') as f:
