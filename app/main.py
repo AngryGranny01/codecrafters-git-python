@@ -43,8 +43,9 @@ def object_write(content_path):
         compressed_content = hashlib.sha1(uncompressed_content).hexdigest()
         print(compressed_content)
         if compressed_content:
-            newPath = '.git/objects/'+str(compressed_content[:2])+'/'+str(compressed_content[2:])
-            os.makedirs(newPath)
+            blub_path=str(compressed_content[:2])+'/'+str(compressed_content[2:])
+            new_directory_path = os.path.join(directory_objects_path, blub_path) 
+            os.mkdir(new_directory_path)
 
 
     
