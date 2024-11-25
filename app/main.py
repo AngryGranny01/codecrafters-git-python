@@ -61,33 +61,38 @@ def blub_write(content_path):
                     f.write(zlib.compress(uncompressed_content))
 
 def read_tree(content_path):
-    git_object_path = os.path.join(directory_objects_path,content_path[0:2],content_path[2:])
+    # Construct the Git object path
+    git_object_path = os.path.join(directory_objects_path, content_path[:2], content_path[2:])
     
+    # Read the compressed Git object
     with open(git_object_path, "rb") as f:
         compressed_data = f.read()
 
+    # Decompress the data
     decompressed_tree = zlib.decompress(compressed_data)
     null_byte_index = decompressed_tree.index(b'\0')
 
+    # Parse the tree header
     tree_header = decompressed_tree[:null_byte_index]
-    tree_body = decompressed_tree[null_byte_index+1:]
-    
+    tree_body = decompressed_tree[null_byte_index + 1:]
     object_type, object_size = tree_header.decode().split()
-    #Print Header of Tree
-    tree_header_string = f"Object Type: {object_type}, Size: {object_size}"
-    
-    result = ""
 
-    recursive_tree_body_create(tree_body,result)
+    # Print the header of the tree
+    print(f"Object Type: {object_type}, Size: {object_size}")
 
-    print(result)
+    # Parse the tree body
+    entries = []  # List to store parsed tree entries
+    recursive_tree_body_create(tree_body, entries)
 
+    # Print the parsed entries in a readable format
+    for entry in entries:
+        print(f"Mode: {entry['mode']}, Name: {entry['name']}, SHA1: {entry['sha1']}")
 
 def recursive_tree_body_create(tree_body, entries):
-    if len(tree_body) <= 1:
+    if len(tree_body) <= 1:  # Stop recursion when the tree body is exhausted
         return
-    
-    # Extract file mode
+
+    # Extract the file mode
     mode_index = tree_body.index(b' ')
     file_mode = tree_body[:mode_index].decode()
 
