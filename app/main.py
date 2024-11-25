@@ -3,6 +3,7 @@ import os
 import zlib
 
 directory_objects_path = ".git/objects"
+output = sys.stdout
 
 def main():
     command = sys.argv[1]
@@ -15,7 +16,6 @@ def main():
         print("Initialized git directory")
     elif command == "cat-file":
         object_read()
-        output = sys.stdout
     else:
         raise RuntimeError(f"Unknown command #{command}")
 
@@ -30,7 +30,7 @@ def object_read():
 
                 content = zlib.decompress(compressed_content)
                 result = content.decode("utf-8").split("\x00")
-                print(result[1])
+                output.write(result[1])
     
 
 
