@@ -61,10 +61,13 @@ def blub_write(content_path):
                     f.write(zlib.compress(uncompressed_content))
 
 def read_tree(content_path):
-    with open(content_path, "rt") as f:
-        newcontent = f.read()
-        print(newcontent)
-    
+    for root, dirs, files in os.walk(directory_objects_path):
+        for file in files:
+            file_path = os.path.join(root, file)
+        
+            with open(file_path, "rb") as f:
+                compressed_content = f.read()
+                print(compressed_content)    
 
 
 if __name__ == "__main__":
