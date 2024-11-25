@@ -101,6 +101,7 @@ def store_object(sha1_hash, data):
 
 def create_tree(directory):
     entries = []
+    print(directory)
     for entry in sorted(os.listdir(directory)):
         if entry == ".git":
             continue
@@ -120,5 +121,6 @@ def create_tree(directory):
     tree_header = f"tree {len(tree_data)}\0".encode()
     tree_object = tree_header + tree_data
     tree_sha1 = hashlib.sha1(tree_object).hexdigest()
+    print(tree_sha1)
     store_object(tree_sha1, tree_object)
     return tree_sha1
