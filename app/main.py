@@ -6,6 +6,11 @@ import zlib
 directory_objects_path = ".git/objects"
 output = sys.stdout
 
+REGULAR_FILE = 100644
+EXEC_FILE = 100755
+SYMBOLIC_LINK = 120000
+DIRECTORIES = 40000
+
 def main():
     command = sys.argv[1]
     if command == "init":
@@ -16,14 +21,16 @@ def main():
             f.write("ref: refs/heads/main\n")
         print("Initialized git directory")
     elif command == "cat-file":
-        object_read()
+        blub_read()
     elif command == "hash-object":
-        object_write(sys.argv[3])
+        blub_write(sys.argv[3])
+    elif command == "ls-tree":
+        read_tree(sys.argv[3])
     else:
         raise RuntimeError(f"Unknown command #{command}")
 
 
-def object_read():
+def blub_read():
     for root, dirs, files in os.walk(directory_objects_path):
         for file in files:
             file_path = os.path.join(root, file)
@@ -35,7 +42,7 @@ def object_read():
                 result = content.decode("utf-8").split("\x00")
                 output.write(result[1])
 
-def object_write(content_path):
+def blub_write(content_path):
     with open(content_path, "rt") as f:
         newcontent = f.read()
         uncompressed_content = b'blob ' + str(len(newcontent)).encode() + b'\x00' + bytes(newcontent, "utf-8")
@@ -53,7 +60,10 @@ def object_write(content_path):
                 with open(new_directory_path, 'wb') as f:
                     f.write(zlib.compress(uncompressed_content))
 
-
+def read_tree():
+    with open(content_path, "rt") as f:
+        newcontent = f.read()
+        print(newcontent)
     
 
 
