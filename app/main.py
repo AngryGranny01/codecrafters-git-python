@@ -47,7 +47,7 @@ def object_write(content_path):
             new_directory_path = os.path.join(directory_objects_path, blub_path) 
             if not os.path.exists(new_directory_path):
                 with open(new_directory_path, 'wb') as f:
-                    f.write(zlib.compress(compressed_content))
+                    f.write(zlib.compress(uncompressed_content))
 
 
     
