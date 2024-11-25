@@ -121,7 +121,7 @@ def recursive_read_tree_body(tree_body, entries):
     recursive_read_tree_body(tree_body[20:], entries)
 
 def test():
-    for root, dirs, files in os.walk(os.path.join('.git', 'index')):
+    for root, dirs, files in os.walk('.git'):
         for file in files:
             file_path = os.path.join(root, file)
         
