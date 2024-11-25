@@ -126,7 +126,9 @@ def write_tree_handler(directory):
         entry_path = os.path.join(directory, entry)
 
         if os.path.isfile(entry_path):
-            print(entry_path)
+            with open(entry_path, "rt") as f:
+                newcontent = f.read()
+                print(newcontent)
         elif os.path.isdir(entry_path):
             print("do directory stuff")
         else:
