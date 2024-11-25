@@ -33,9 +33,8 @@ def main():
             for entry in tree:
                 print(f"Mode: {entry['mode']}, Name: {entry['name']}, SHA1: {entry['sha1']}")
     elif command == "write-tree":
-        read_tree(sys.argv[3])
-        for entry in tree:
-                print(f"Mode: {entry['mode']}, Name: {entry['name']}, SHA1: {entry['sha1']}")
+        print(sys.argv[2])
+        print(test())
     else:
         raise RuntimeError(f"Unknown command #{command}")
 
@@ -122,7 +121,13 @@ def recursive_read_tree_body(tree_body, entries):
     # Recursively process the rest of the tree body
     recursive_read_tree_body(tree_body[20:], entries)
 
-
+def test():
+    for root, dirs, files in os.walk(directory_objects_path):
+        for file in files:
+            file_path = os.path.join(root, file)
+        
+            with open(file_path, "rb") as f:
+                compressed_content = f.read()
     
 
 if __name__ == "__main__":
