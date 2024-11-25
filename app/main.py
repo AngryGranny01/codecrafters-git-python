@@ -23,7 +23,13 @@ def main():
 def object_read():
     for root, dirs, files in os.walk(directory_objects_path):
         for file in files:
-            print(zlib.decompress(file))
+            file_path = os.path.join(root, file)
+        
+            with open(file_path, "rb") as f:
+                compressed_content = f.read()
+
+                content = zlib.decompress(compressed_content)
+                print(content)
     
 
 
