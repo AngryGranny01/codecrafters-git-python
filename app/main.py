@@ -23,7 +23,7 @@ def main():
 def object_read():
     for root, dirs, files in os.walk(directory_objects_path):
         for file in files:
-            print(f"Found file: {file}")
+            print(zlib.decompress(file))
     
 
 
