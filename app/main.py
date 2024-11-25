@@ -67,8 +67,10 @@ def read_tree(content_path):
         compressed_data = f.read()
 
     decompressed_tree = zlib.decompress(compressed_data)
-    tree_content = decompressed_tree.split("\x00")
-    print(tree_content)
+    null_byte_index = decompressed_tree.split(b'\0')
+    tree_header = decompressed_tree[:null_byte_index]
+    tree_body = decompressed_tree[null_byte_index+1:]
+    print(tree_body)
     
 
 if __name__ == "__main__":
