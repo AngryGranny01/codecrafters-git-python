@@ -129,7 +129,7 @@ def write_tree_handler(directory):
             compressed_blob = hashlib.sha1(uncompressed_blob).hexdigest()
             tree_entries.append(compressed_blob)
         elif os.path.isdir(entry_path):
-            create_tree_hash()
+            recursive_tree_hash_generation(entry_path)
         else:
             continue # Skip unsupported entries
     return
