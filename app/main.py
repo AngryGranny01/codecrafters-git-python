@@ -127,25 +127,26 @@ def create_blub(blub_path):
 
 def recursive_tree_hash_generation(startPath):
     tree_entries = []
-    for entry in sorted(os.listdir(startPath)):
-        entry_path = os.path.join(startPath, entry)
-        print(entry_path)
+    if startPath != "./.git":
+        for entry in sorted(os.listdir(startPath)):
+            entry_path = os.path.join(startPath, entry)
+            print(entry_path)
 
-        if os.path.isfile(entry_path):          
-            uncompressed_blob = create_blub(entry_path)
-            # Compute hash
-            sha1 = hashlib.sha1(uncompressed_blob).hexdigest()
-            mode = REGULAR_FILE
-        elif os.path.isdir(entry_path):
-            sha1 = recursive_tree_hash_generation(entry_path)
-            mode = DIRECTORY
-        else:
-            continue # Skip unsupported entries
-        tree_entries.append(f"{mode} {entry}\0".encode() + bytes.fromhex(sha1))
+            if os.path.isfile(entry_path):          
+                uncompressed_blob = create_blub(entry_path)
+                # Compute hash
+                sha1 = hashlib.sha1(uncompressed_blob).hexdigest()
+                mode = REGULAR_FILE
+            elif os.path.isdir(entry_path):
+                sha1 = recursive_tree_hash_generation(entry_path)
+                mode = DIRECTORY
+            else:
+                continue # Skip unsupported entries
+            tree_entries.append(f"{mode} {entry}\0".encode() + bytes.fromhex(sha1))
     
-    # create the tree object
-    tree_data = b"".join(tree_entries)
-    print(tree_data)
+        # create the tree object
+        tree_data = b"".join(tree_entries)
+        print(tree_data)
 
 if __name__ == "__main__":
     main()
