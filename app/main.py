@@ -25,7 +25,13 @@ def main():
     elif command == "hash-object":
         blub_write(sys.argv[3])
     elif command == "ls-tree":
-        read_tree(sys.argv[3])
+        tree = read_tree(sys.argv[3])
+        if sys.argv[2] == "----name-only":
+            for entry in tree:
+                print(f"{entry['name']}")
+        else:
+            for entry in tree:
+                print(f"Mode: {entry['mode']}, Name: {entry['name']}, SHA1: {entry['sha1']}")
     else:
         raise RuntimeError(f"Unknown command #{command}")
 
@@ -84,11 +90,10 @@ def read_tree(content_path):
     entries = []  # List to store parsed tree entries
     recursive_tree_body_create(tree_body, entries)
 
+    # Sort entries after name
     entries.sort(key=lambda entry: entry['name'])
 
-    # Print the parsed entries in a readable format
-    for entry in entries:
-        print(f"Mode: {entry['mode']}, Name: {entry['name']}, SHA1: {entry['sha1']}")
+    return entries
 
 def recursive_tree_body_create(tree_body, entries):
     if len(tree_body) <= 1:  # Stop recursion when the tree body is exhausted
