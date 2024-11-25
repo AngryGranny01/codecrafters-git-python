@@ -69,9 +69,7 @@ def read_tree(content_path):
         
             with open(file_path, "rb") as f:
                 compressed_content = f.read()
-                content = zlib.decompress(compressed_content)
-                result = content.decode("utf-8")
-                output.write(result[1])  
+                print(compressed_content) 
 
 
 if __name__ == "__main__":
