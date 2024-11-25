@@ -71,7 +71,8 @@ def read_tree(content_path):
     print(null_byte_index)
     tree_header = decompressed_tree[:null_byte_index]
     tree_body = decompressed_tree[null_byte_index+1:]
-    print(tree_body)
+    
+    print(str(tree_header,"utf-8"))
     
 
 if __name__ == "__main__":
