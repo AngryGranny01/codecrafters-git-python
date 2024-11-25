@@ -26,7 +26,7 @@ def main():
         blub_write(sys.argv[3])
     elif command == "ls-tree":
         tree = read_tree(sys.argv[3])
-        if sys.argv[2] == "----name-only":
+        if sys.argv[2] == "--name-only":
             for entry in tree:
                 print(f"{entry['name']}")
         else:
@@ -84,7 +84,7 @@ def read_tree(content_path):
     object_type, object_size = tree_header.decode().split()
 
     # Print the header of the tree
-    print(f"Object Type: {object_type}, Size: {object_size}")
+    # print(f"Object Type: {object_type}, Size: {object_size}")
 
     # Parse the tree body
     entries = []  # List to store parsed tree entries
