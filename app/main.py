@@ -75,10 +75,38 @@ def read_tree(content_path):
     object_type, object_size = tree_header.decode().split()
     #Print Header of Tree
     tree_header_string = f"Object Type: {object_type}, Size: {object_size}"
+    
+    result = ""
 
-    print(tree_body)
-    content_of_tree = []
-    print(decompressed_tree.decode())
+    recursive_tree_body_create(tree_body,result)
+
+    print(result)
+
+
+def recursive_tree_body_create(tree_body, entries):
+    if len(tree_body) <= 1:
+        return
+    
+    # Extract file mode
+    mode_index = tree_body.index(b' ')
+    file_mode = tree_body[:mode_index].decode()
+
+    # Move forward to extract the file name
+    tree_body = tree_body[mode_index + 1:]
+    name_index = tree_body.index(b'\0')
+    file_name = tree_body[:name_index].decode()
+
+    # Move forward to extract the SHA-1 hash
+    tree_body = tree_body[name_index + 1:]
+    sha1_hash = tree_body[:20].hex()
+
+    # Add the parsed entry to the list
+    entries.append({"mode": file_mode, "name": file_name, "sha1": sha1_hash})
+
+    # Recursively process the rest of the tree body
+    recursive_tree_body_create(tree_body[20:], entries)
+
+
     
 
 if __name__ == "__main__":
