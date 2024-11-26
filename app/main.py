@@ -267,7 +267,7 @@ def create_commit_tree(
         commit += f"author {author} {timestamp} {timezone}\n"
         commit += f"commiter {committer} {timestamp} {timezone}"
     
-    sha1 = hashlib.sha1(commit).hexdigest()
+    sha1 = hashlib.sha1(commit.encode()).hexdigest()
     print(sha1)
 
 if __name__ == "__main__":
