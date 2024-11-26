@@ -21,7 +21,7 @@ def main():
     elif command == "hash-object":
         hash_object_handler(sys.argv[3])
     elif command == "ls-tree":
-        handle_ls_tree()
+        ls_tree_handler()
     elif command == "write-tree":
         tree_hash = write_tree(".")
         print(tree_hash)
@@ -60,7 +60,7 @@ def hash_object_handler(content_path):
 
 
 # Handles the 'ls-tree' command to list the contents of a tree object.
-def handle_ls_tree():
+def ls_tree_handler():
     tree_hash = sys.argv[len(sys.argv)-1] 
     name_only = "--name-only" in sys.argv
 
@@ -130,7 +130,16 @@ def create_blob(file_path):
         blob_content = f.read()
     header = f"blob {len(blob_content)}\0".encode("utf-8")
     return header + blob_content
-        
+
+# Writes a Git object to the .git/objects directory.
+def write_object(sha1, data):
+    object_dir = os.path.join(directory_objects_path, sha1[:2])
+    object_path = os.path.join(object_dir, sha1[2:])
+    os.makedirs(object_dir, exist_ok=True)
+    with open(object_path, "wb") as f:
+        f.write(zlib.compress(data))
+
+
 # Recursively writes a tree object and returns its SHA1 hash.
 def write_tree(path ,write =True):
     if os.path.isfile(path):
@@ -180,13 +189,6 @@ def write_tree(path ,write =True):
     if write:
         write_object(tree_sha1, tree_data)
     return tree_sha1
-
-def write_object(sha1, data):
-    dir = f".git/objects/{sha1[:2]}"
-    path = f"{dir}/{sha1[2:]}"
-    os.makedirs(dir, exist_ok=True)
-    with open(path, "wb") as f:
-        f.write(zlib.compress(data))
 
 # Handles the 'commit-tree' command to create a commit object.
 def handle_commit_tree():
