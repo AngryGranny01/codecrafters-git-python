@@ -241,10 +241,11 @@ def create_commit_tree(
     commit = f"tree {tree_sha}\n"
     if parent_sha:
         commit += f"parent {parent_sha}\n"
-    commit += f"author {author} {timestamp} {timezone}\n"
-    commit += f"committer {committer} {timestamp} {timezone}\n\n"
-    commit += message + "\n"
+        commit += f"author {author} {timestamp} {timezone}\n"
+        commit += f"committer {committer} {timestamp} {timezone}\n\n"
+        commit += message + "\n"
 
+    print(commit)
     # Calculate SHA1 hash of the commit object
     sha1 = hashlib.sha1(commit.encode()).hexdigest()
 
