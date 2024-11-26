@@ -135,7 +135,7 @@ def recursive_tree_hash_generation(startPath):
             uncompressed_blob = create_blub(entry_path)
             # Compute hash
             print(uncompressed_blob)
-            sha1 = zlib(uncompressed_blob)
+            sha1 = hashlib.sha1(uncompressed_blob).hexdigest()
             mode = REGULAR_FILE
         elif os.path.isdir(entry_path):
             sha1 = recursive_tree_hash_generation(entry_path)
