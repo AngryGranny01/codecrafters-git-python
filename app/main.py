@@ -121,7 +121,7 @@ def recursive_read_tree_body(tree_body, entries):
     recursive_read_tree_body(tree_body[20:], entries)
 
 def create_blob(blob_path):
-    with open(blob_path, "rt") as f:
+    with open(blob_path, "rb") as f:
         blob_content = f.read()
     header = f"blob {len(blob_content)}\0".encode("utf-8")
     blob = header + blob_content
@@ -134,7 +134,6 @@ def recursive_tree_hash_generation(start_path):
     
     for entry in sorted(os.listdir(start_path)):
         entry_path = os.path.join(start_path, entry)
-        print(entry_path)
         if entry_path == "./.git":
             continue
 
