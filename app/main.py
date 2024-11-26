@@ -203,63 +203,56 @@ def write_object(sha1, data):
     with open(path, "wb") as f:
         f.write(zlib.compress(data))
 
+# Handles the 'commit-tree' command to create a commit object.
 def handle_commit_tree():
     args = sys.argv
     if len(args) < 4:
         print("Invalid arguments. Usage: ./your_program.sh commit-tree <tree_sha> [-p <parent_sha>] -m <message>")
         return
 
+    # Parse arguments
     if args[3] == "-m":
-        # Case: Only a tree SHA and message are provided (no parent)
-        commit_tree_sha = args[2]
+        # Only a tree SHA and message are provided
+        tree_sha = args[2]
         commit_message = " ".join(args[4:])
-        create_commit_tree(None, commit_tree_sha, None, commit_message)
+        create_commit_tree(tree_sha, commit_message)
     elif args[3] == "-p" and args[5] == "-m":
-        # Case: A parent SHA is also provided
-        commit_tree_sha = args[2]
-        parent_commit_sha = args[4]
+        # A parent SHA is also provided
+        tree_sha = args[2]
+        parent_sha = args[4]
         commit_message = " ".join(args[6:])
-        
-        for root, dirs, files in os.walk(directory_objects_path):
-            for file in files:
-                file_path = os.path.join(root, file)
-
-                with open(file_path, "rb") as f:
-                    compressed_content = f.read()
-                    try:
-                        decompressed_content = zlib.decompress(compressed_content)
-                    except zlib.error:
-                        print(f"Error decompressing file: {file_path}")
-                        continue
-
-                if commit_tree_sha.encode() in decompressed_content and parent_commit_sha.encode() in decompressed_content:
-                    create_commit_tree(decompressed_content, commit_tree_sha, parent_commit_sha, commit_message)
-                    return
-        print("Matching parent and tree not found in objects.")
+        create_commit_tree(tree_sha, commit_message, parent_sha)
     else:
         print("Command doesn't exist. Usage: ./your_program.sh commit-tree <tree_sha> [-p <parent_sha>] -m <message>")
 
+# Creates a commit object and writes it to the .git/objects directory.
 def create_commit_tree(
     tree_sha,
     message,     
     parent_sha: str = None,
     author: str = "",
     committer: str = "",):
-    # get author 
-    timestamp = time.time()
-    timezone = "+0000"
 
+    # Get current timestamp and timezone
+    timestamp = int(time.time())
+    timezone = time.strftime("%z")
+
+    # Construct the commit object
     commit = f"tree {tree_sha}\n"
-
     if parent_sha:
         commit += f"parent {parent_sha}\n"
-        commit += f"author {author} {timestamp} {timezone}\n"
-        commit += f"commiter {committer} {timestamp} {timezone}\n\n"
-        commit += message + "\n"
-    
+    commit += f"author {author} {timestamp} {timezone}\n"
+    commit += f"committer {committer} {timestamp} {timezone}\n\n"
+    commit += message + "\n"
+
+    # Calculate SHA1 hash of the commit object
     sha1 = hashlib.sha1(commit.encode()).hexdigest()
-    print(sha1)
-    write_object(sha1, commit)
+
+    # Write the commit object
+    write_object(sha1, commit.encode())
+
+    # Output the commit hash
+    print(f"Created commit: {sha1}")
 
 if __name__ == "__main__":
     main()
