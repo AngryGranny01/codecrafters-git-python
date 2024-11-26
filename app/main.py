@@ -224,7 +224,7 @@ def handle_commit_tree():
         
                 with open(file_path, "rb") as f:
                     compressed_content = f.read()
-                print(compressed_content)
+                print(zlib.decompress(compressed_content))
     else:
         print("Command doesnt exist")
 
