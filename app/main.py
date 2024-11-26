@@ -218,6 +218,13 @@ def handle_commit_tree():
         print("Do something")
     elif sys.argv[3] == "-p" and sys.argv[5] == "-m":
         print("Do something else")
+        for root, dirs, files in os.walk(directory_objects_path):
+            for file in files:
+                file_path = os.path.join(root, file)
+        
+                with open(file_path, "rb") as f:
+                    compressed_content = f.read()
+                print(compressed_content)
     else:
         print("Command doesnt exist")
 
