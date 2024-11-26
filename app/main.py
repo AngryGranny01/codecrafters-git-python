@@ -257,7 +257,7 @@ def create_commit_tree(
         commit += f"commiter {committer} {timestamp} {timezone}\n\n"
         commit += message + "\n"
     
-    sha1 = hashlib.sha1(commit).hexdigest()
+    sha1 = hashlib.sha1(commit.encode()).hexdigest()
     
     write_object(sha1, commit)
 
