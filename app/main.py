@@ -136,11 +136,13 @@ def recursive_tree_hash_generation(start_path):
 
         if os.path.isfile(entry_path):
             # Create a blob for the file
+            print(entry_path)
             uncompressed_blob = create_blob(entry_path)
             sha1 = hash_object(uncompressed_blob, "blob")
             mode = f"{REGULAR_FILE:o}"
         elif os.path.isdir(entry_path):
             # Recurse into the directory
+            print(entry_path)
             sha1 = recursive_tree_hash_generation(entry_path)
             mode = f"{DIRECTORY:o}"
         else:
@@ -152,7 +154,7 @@ def recursive_tree_hash_generation(start_path):
     
     # Combine all entries to create the tree object
     tree_data = b"".join(tree_entries)
-    print(tree_data)
+    #print(tree_data)
     return hash_object(tree_data, "tree")
     
 def hash_object(data, obj_type):
