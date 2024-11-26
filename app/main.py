@@ -24,6 +24,8 @@ def main():
     elif command == "write-tree":
         tree_hash = write_tree(".")
         print(tree_hash)
+    elif command == "commit-tree":
+        handle_commit_tree()
     else:
         raise RuntimeError(f"Unknown command #{command}")
 
@@ -210,6 +212,14 @@ def hash_object(data, obj_type):
         with open(object_path, "wb") as f:
             f.write(zlib.compress(full_data))
     return sha1_hash
+
+def handle_commit_tree():
+    if sys.argv[3] == "-m":
+        print("Do something")
+    elif sys.argv[3] == "-p" & sys.argv[5] == "-m":
+        print("Do something else")
+    else:
+        print("Command doesnt exist")
 
 if __name__ == "__main__":
     main()
