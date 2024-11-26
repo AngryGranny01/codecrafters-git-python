@@ -135,7 +135,7 @@ def recursive_tree_hash_generation(start_path):
     for entry in sorted(os.listdir(start_path)):
         entry_path = os.path.join(start_path, entry)
         print(entry_path)
-        if entry_path == "/.git":
+        if entry_path == "./.git":
             continue
 
         if os.path.isfile(entry_path):
