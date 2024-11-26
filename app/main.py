@@ -214,10 +214,12 @@ def hash_object(data, obj_type):
     return sha1_hash
 
 def handle_commit_tree():
-    if sys.argv[3] == "-m":
+    args = sys.argv
+    if args[3] == "-m":
         print("Do something")
-    elif sys.argv[3] == "-p" and sys.argv[5] == "-m":
+    elif args[3] == "-p" and args[5] == "-m":
         print("Do something else")
+        commit_tree(args[2], args[4], args[6])
         for root, dirs, files in os.walk(directory_objects_path):
             for file in files:
                 file_path = os.path.join(root, file)
@@ -227,6 +229,11 @@ def handle_commit_tree():
                 print(zlib.decompress(compressed_content))
     else:
         print("Command doesnt exist")
+
+def commit_tree(parent_tree_sha, commit_sha, message):
+    print(parent_tree_sha)
+    print(commit_sha)
+    print(message)
 
 if __name__ == "__main__":
     main()
