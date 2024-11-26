@@ -152,6 +152,7 @@ def recursive_tree_hash_generation(start_path):
     
     # Combine all entries to create the tree object
     tree_data = b"".join(tree_entries)
+    print(tree_data)
     return hash_object(tree_data, "tree")
     
 def hash_object(data, obj_type):
