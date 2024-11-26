@@ -49,8 +49,14 @@ def cat_file_handler():
 
 # Handles the 'hash-object' command to hash and store a file as a blob.
 def hash_object_handler(content_path):
-    uncompressed_blob = create_blob(content_path)
-    hash_object(uncompressed_blob, "blob")
+    uncompressed_content = create_blob(content_path)
+    # Compute hash
+    compressed_content = hashlib.sha1(uncompressed_content).hexdigest()
+    print(compressed_content)
+    if compressed_content:
+        object_dir = os.path.join(directory_objects_path,compressed_content[0:2])
+        # Ensure the parent directory exists
+        os.makedirs(object_dir, exist_ok=True)
 
 
 # Handles the 'ls-tree' command to list the contents of a tree object.
