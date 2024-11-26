@@ -249,12 +249,21 @@ def handle_commit_tree():
     else:
         print("Command doesn't exist. Usage: ./your_program.sh commit-tree <tree_sha> [-p <parent_sha>] -m <message>")
 
-def create_commit_tree(parent_file,parent_tree_sha, commit_sha, message):
+def create_commit_tree(
+    tree_sha,
+    message,     
+    parent_sha: str = None,
+    author: str = "",
+    committer: str = "",):
     # get author 
-    print(parent_file.decode("utf-8"))
-    print("Tree Sha: "+ parent_tree_sha)
-    print(commit_sha)
-    print(message)
+    timestamp = ""
+    timezone = "+0000"
+
+    if parent_sha:
+        commit += f"parent {parent_sha}\n"
+        commit += f"author {author} {timestamp} {timezone}\n"
+        commit += f"commiter {committer} {timestamp} {timezone}"
+    print(commit)
 
 if __name__ == "__main__":
     main()
