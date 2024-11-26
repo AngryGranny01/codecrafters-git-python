@@ -123,7 +123,10 @@ def recursive_read_tree_body(tree_body, entries):
 def create_blob(blob_path):
     with open(blob_path, "rt") as f:
         blob_content = f.read()
-        return b'blob '+str(len(blob_content)).encode()+b'\x00' + blob_content.encode()
+    header = f"blob {len(blob_content)}\0".encode("utf-8")
+    blob = header + blob_content
+    sha1 = hashlib.sha1(blob).hexdigest
+    return sha1
         
 
 def recursive_tree_hash_generation(start_path):
