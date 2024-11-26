@@ -56,7 +56,7 @@ def hash_object_handler(content_path):
 # Handles the 'ls-tree' command to list the contents of a tree object.
 def handle_ls_tree():
     args = sys.argv[2]
-    tree_hash = args[len(args)-1]
+    tree_hash = sys.argv[len(sys.argv)-1]
     print(tree_hash)  
     name_only = "--name-only" in args  # Check for the presence of '--name-only'
 
