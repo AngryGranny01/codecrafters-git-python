@@ -158,7 +158,6 @@ def hash_object(data, obj_type):
     if not os.path.exists(object_path):
         with open(object_path, "wb") as f:
             f.write(zlib.compress(full_data))
-    print(full_data) 
     return sha1_hash
 
 if __name__ == "__main__":
