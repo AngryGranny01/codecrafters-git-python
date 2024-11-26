@@ -20,15 +20,9 @@ def main():
     elif command == "hash-object":
         hash_object_handler(sys.argv[3])
     elif command == "ls-tree":
-        tree = read_tree(sys.argv[3])
-        if sys.argv[2] == "--name-only":
-            for entry in tree:
-                print(f"{entry['name']}")
-        else:
-            for entry in tree:
-                print(f"Mode: {entry['mode']}, Name: {entry['name']}, SHA1: {entry['sha1']}")
+        handle_ls_tree()
     elif command == "write-tree":
-        tree_hash = recursive_tree_hash_generation("./")
+        tree_hash = write_tree(".")
         print(tree_hash)
     else:
         raise RuntimeError(f"Unknown command #{command}")
@@ -40,6 +34,7 @@ def initialize_git_directory():
         f.write("ref: refs/heads/main\n")
     print("Initialized git directory")
 
+# Handles the 'cat-file' command to display content of a Git object.
 def cat_file_handler():
     for root, dirs, files in os.walk(directory_objects_path):
         for file in files:
@@ -52,10 +47,25 @@ def cat_file_handler():
                 result = content.decode("utf-8").split("\x00")
                 output.write(result[1])
 
+# Handles the 'hash-object' command to hash and store a file as a blob.
 def hash_object_handler(content_path):
-    uncompressed_content = create_blob(content_path)
-    hash_object(uncompressed_content, "blob")
+    uncompressed_blob = create_blob(content_path)
+    hash_object(uncompressed_blob, "blob")
 
+
+# Handles the 'ls-tree' command to list the contents of a tree object.
+def handle_ls_tree():
+    """Handles the 'ls-tree' command to list the contents of a tree object."""
+    tree_hash = sys.argv[2]
+    tree = read_tree(tree_hash)
+    if "--name-only" in sys.argv:
+        for entry in tree:
+            print(entry["name"])
+    else:
+        for entry in tree:
+            print(f"Mode: {entry['mode']}, Name: {entry['name']}, SHA1: {entry['sha1']}")
+
+# Reads and parses a tree object.
 def read_tree(content_path):
     # Construct the Git object path
     git_object_path = os.path.join(directory_objects_path, content_path[:2], content_path[2:])
@@ -108,42 +118,38 @@ def recursive_read_tree_body(tree_body, entries):
     # Recursively process the rest of the tree body
     recursive_read_tree_body(tree_body[20:], entries)
 
-def create_blob(blob_path):
-    with open(blob_path, "rb") as f:
+# Creates a blob object for a file.
+def create_blob(file_path):
+    with open(file_path, "rb") as f:
         blob_content = f.read()
-    header = f"blob {len(blob_content)}\0".encode("utf-8")
-    blob = header + blob_content
-    return blob  # Return the complete blob data
+    header = f"blob {len(blob_content)}\0".encode()
+    return header + blob_content
         
-
-def recursive_tree_hash_generation(start_path):
+# Recursively writes a tree object and returns its SHA1 hash.
+def write_tree(path):
+    if os.path.isfile(path):
+        return hash_object(create_blob(path), "blob")
+    
     tree_entries = []
-    
-    for entry in sorted(os.listdir(start_path)):
-        entry_path = os.path.join(start_path, entry)
-        if entry_path == "./.git":
+    for entry in sorted(os.listdir(path)):
+        if entry == ".git":
             continue
-
-        if os.path.isfile(entry_path):
-            # Create a blob for the file
-            uncompressed_blob = create_blob(entry_path)
-            sha1 = hash_object(uncompressed_blob, "blob")
+        full_path = os.path.join(path, entry)
+        if os.path.isfile(full_path):
             mode = f"{REGULAR_FILE:o}"
-        elif os.path.isdir(entry_path):
-            # Recurse into the directory
-            sha1 = recursive_tree_hash_generation(entry_path)
+            sha1 = write_tree(full_path)
+        elif os.path.isdir(full_path):
             mode = f"{DIRECTORY:o}"
+            sha1 = write_tree(full_path)
         else:
-            continue  # Skip unsupported entries
-
-        # Add the entry to the tree
-        tree_entry = f"{mode} {entry}\0".encode() + bytes.fromhex(sha1)
-        tree_entries.append(tree_entry)
+            continue
+        tree_entries.append(f"{mode} {entry}\0".encode() + bytes.fromhex(sha1))
     
-    # Combine all entries to create the tree object
     tree_data = b"".join(tree_entries)
-    return hash_object(tree_data, "tree")
-    
+    tree_object = f"tree {len(tree_data)}\0".encode() + tree_data
+    return hash_object(tree_object, "tree")
+
+# Hashes and stores a Git object.
 def hash_object(data, obj_type):
     header = f"{obj_type} {len(data)}\0".encode()
     full_data = header + data
