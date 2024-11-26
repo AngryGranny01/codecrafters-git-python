@@ -53,7 +53,7 @@ def cat_file_handler():
                 output.write(result[1])
 
 def hash_object_handler(content_path):
-        uncompressed_content = create_blub(content_path)
+        uncompressed_content = create_blob(content_path)
         # Compute hash
         compressed_content = hashlib.sha1(uncompressed_content).hexdigest()
 
@@ -62,8 +62,8 @@ def hash_object_handler(content_path):
             # Ensure the parent directory exists
             os.makedirs(object_dir, exist_ok=True)
 
-            blub_path=str(compressed_content[0:2])+'/'+str(compressed_content[2:])
-            new_directory_path = os.path.join(directory_objects_path, blub_path) 
+            blob_path=str(compressed_content[0:2])+'/'+str(compressed_content[2:])
+            new_directory_path = os.path.join(directory_objects_path, blob_path) 
             if not os.path.exists(new_directory_path):
                 with open(new_directory_path, 'wb') as f:
                     f.write(zlib.compress(uncompressed_content))
@@ -120,33 +120,39 @@ def recursive_read_tree_body(tree_body, entries):
     # Recursively process the rest of the tree body
     recursive_read_tree_body(tree_body[20:], entries)
 
-def create_blub(blub_path):
-    with open(blub_path, "rt") as f:
+def create_blob(blob_path):
+    with open(blob_path, "rt") as f:
         blob_content = f.read()
         blob_object = b'blob '+str(len(blob_content)).encode()+b'\x00' + bytes(blob_content,"utf-8")
         return blob_object
 
-def recursive_tree_hash_generation(startPath):
+def recursive_tree_hash_generation(start_path):
     tree_entries = []
-    for entry in sorted(os.listdir(startPath)):
-        entry_path = os.path.join(startPath, entry)
+    
+    for entry in sorted(os.listdir(start_path)):
+        entry_path = os.path.join(start_path, entry)
         if entry_path == "./.git":
             continue
-        elif os.path.isfile(entry_path):          
-            uncompressed_blob = create_blub(entry_path)
-            # Compute hash
-            sha1 = hashlib.sha1(uncompressed_blob).hexdigest()
-            mode = REGULAR_FILE
+
+        if os.path.isfile(entry_path):
+            # Create a blob for the file
+            uncompressed_blob = create_blob(entry_path)
+            sha1 = hash_object(uncompressed_blob, "blob")
+            mode = f"{REGULAR_FILE:o}"
         elif os.path.isdir(entry_path):
+            # Recurse into the directory
             sha1 = recursive_tree_hash_generation(entry_path)
-            mode = DIRECTORY
+            mode = f"{DIRECTORY:o}"
         else:
-            continue # Skip unsupported entries
-        tree_entries.append(f"{mode} {entry}\0".encode() + bytes.fromhex(sha1))
+            continue  # Skip unsupported entries
+
+        # Add the entry to the tree
+        tree_entry = f"{mode} {entry}\0".encode() + bytes.fromhex(sha1)
+        tree_entries.append(tree_entry)
     
-        # create the tree object
-        tree_data = b"".join(tree_entries)
-        return hash_object(tree_data, "tree")
+    # Combine all entries to create the tree object
+    tree_data = b"".join(tree_entries)
+    return hash_object(tree_data, "tree")
     
 def hash_object(data, obj_type):
     header = f"{obj_type} {len(data)}\0".encode()
