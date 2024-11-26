@@ -143,10 +143,10 @@ def write_tree(path):
 
         # Determine the mode and recursively process the entry
         if os.path.isfile(full_path):
-            mode = f"{REGULAR_FILE:o}"  # Mode for regular files
+            mode = f"{REGULAR_FILE}"  # Mode for regular files
             sha1 = write_tree(full_path)  # Hash blob and get its SHA1
         elif os.path.isdir(full_path):
-            mode = f"{DIRECTORY:o}"  # Mode for directories
+            mode = f"{DIRECTORY}"  # Mode for directories
             sha1 = write_tree(full_path)  # Recursively process the directory
         else:
             continue  # Skip unsupported entries
