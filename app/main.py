@@ -1,6 +1,7 @@
 import hashlib
 import sys
 import os
+import time
 import zlib
 
 directory_objects_path = ".git/objects"
@@ -256,7 +257,7 @@ def create_commit_tree(
     author: str = "",
     committer: str = "",):
     # get author 
-    timestamp = ""
+    timestamp = time.time()
     timezone = "+0000"
 
     commit = f""
