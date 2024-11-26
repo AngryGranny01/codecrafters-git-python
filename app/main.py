@@ -185,20 +185,31 @@ def write_tree(path ,write =True):
 
 # Handles the 'commit-tree' command to create a commit object.
 def handle_commit_tree():
-    if len(sys.argv) < 4 or sys.argv[3] != "-m":
-        print("Usage: ./your_program.sh commit-tree <tree-hash> [-p <parent-hash>] -m <message>")
+    args = sys.argv
+    if len(args) < 4:
+        print("Invalid arguments. Usage: ./your_program.sh commit-tree <tree_sha> [-p <parent_sha>] -m <message>")
         return
 
-    tree_sha = sys.argv[2]
-    parent_sha = sys.argv[4] if len(sys.argv) > 5 and sys.argv[3] == "-p" else None
-    message_index = 6 if parent_sha else 4
-    commit_message = " ".join(sys.argv[message_index:])
-    commit_sha = create_commit_tree(tree_sha, commit_message, parent_sha)
-    print(commit_sha)
+    # Parse arguments
+    if args[3] == "-m":
+        # Only a tree SHA and message are provided
+        tree_sha = args[2]
+        commit_message = " ".join(args[4:])
+        commit_sha1 = create_commit_tree(tree_sha, commit_message)
+        print(commit_sha1)
+    elif args[3] == "-p" and args[5] == "-m":
+        # A parent SHA is also provided
+        tree_sha = args[2]
+        parent_sha = args[4]
+        commit_message = " ".join(args[6:])
+        commit_sha1 = create_commit_tree(tree_sha, commit_message, parent_sha)
+        print(commit_sha1)
+    else:
+        print("Command doesn't exist. Usage: ./your_program.sh commit-tree <tree_sha> [-p <parent_sha>] -m <message>")
 
 # Creates a commit object and writes it to the .git/objects directory.
 def create_commit_tree(tree_sha, message, parent_sha: str = None, author: str = "", committer: str = ""):
-    
+
     # Get current timestamp and timezone
     timestamp = int(time.time())
     timezone = time.strftime("%z")
