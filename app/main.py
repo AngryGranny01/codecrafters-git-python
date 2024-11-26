@@ -259,6 +259,8 @@ def create_commit_tree(
     timestamp = ""
     timezone = "+0000"
 
+    commit = f""
+
     if parent_sha:
         commit += f"parent {parent_sha}\n"
         commit += f"author {author} {timestamp} {timezone}\n"
