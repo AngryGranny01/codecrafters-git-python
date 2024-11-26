@@ -257,7 +257,7 @@ def create_commit_tree(
     author: str = "",
     committer: str = "",):
     # get author 
-    timestamp = int(time.time())
+    timestamp = time.time()
     timezone = "+0000"
 
     commit = f""
