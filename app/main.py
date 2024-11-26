@@ -197,11 +197,13 @@ def handle_commit_tree():
     print(commit_sha)
 
 # Creates a commit object and writes it to the .git/objects directory.
-def create_commit_tree(tree_sha, message, parent_sha=None, author="Author <author@example.com>", committer=None):
-    committer = committer or author
+def create_commit_tree(tree_sha, message, parent_sha: str = None, author: str = "", committer: str = ""):
+    
+    # Get current timestamp and timezone
     timestamp = int(time.time())
     timezone = time.strftime("%z")
 
+    # Construct the commit object
     commit = f"tree {tree_sha}\n"
     if parent_sha:
         commit += f"parent {parent_sha}\n"
@@ -210,10 +212,14 @@ def create_commit_tree(tree_sha, message, parent_sha=None, author="Author <autho
         commit += message + "\n"
 
     commit_object = f"commit {len(commit)}\0".encode() + commit.encode()
-    sha1 = hashlib.sha1(commit_object).hexdigest()
-    write_object(sha1, commit_object)
-    return sha1
 
+    # Calculate SHA1 hash of the commit object
+    sha1 = hashlib.sha1(commit_object).hexdigest()
+
+    # Write the commit object
+    write_object(sha1, commit_object)
+
+    return sha1
 
 if __name__ == "__main__":
     main()
