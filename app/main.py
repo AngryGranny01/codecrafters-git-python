@@ -122,7 +122,7 @@ def recursive_read_tree_body(tree_body, entries):
 def create_blob(file_path):
     with open(file_path, "rb") as f:
         blob_content = f.read()
-    header = f"blob {len(blob_content)}\0".encode()
+    header = f"blob {len(blob_content)}\0".encode("utf-8")
     return header + blob_content
         
 # Recursively writes a tree object and returns its SHA1 hash.
@@ -137,6 +137,7 @@ def write_tree(path):
 
         if os.path.isfile(full_path):
             mode = f"{REGULAR_FILE:o}"  # File mode for regular files
+            print(create_blob(full_path))
             sha1 = hash_object(create_blob(full_path), "blob")  # Create blob and get its SHA1
         elif os.path.isdir(full_path):
             mode = f"{DIRECTORY:o}"  # Directory mode
