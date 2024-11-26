@@ -53,20 +53,8 @@ def cat_file_handler():
                 output.write(result[1])
 
 def hash_object_handler(content_path):
-        uncompressed_content = create_blob(content_path)
-        # Compute hash
-        compressed_content = hashlib.sha1(uncompressed_content).hexdigest()
-
-        if compressed_content:
-            object_dir = os.path.join(directory_objects_path,compressed_content[0:2])
-            # Ensure the parent directory exists
-            os.makedirs(object_dir, exist_ok=True)
-
-            blob_path=str(compressed_content[0:2])+'/'+str(compressed_content[2:])
-            new_directory_path = os.path.join(directory_objects_path, blob_path) 
-            if not os.path.exists(new_directory_path):
-                with open(new_directory_path, 'wb') as f:
-                    f.write(zlib.compress(uncompressed_content))
+    uncompressed_content = create_blob(content_path)
+    hash_object(uncompressed_content, "blob")
 
 def read_tree(content_path):
     # Construct the Git object path
