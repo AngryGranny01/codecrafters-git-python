@@ -152,14 +152,13 @@ def write_tree(path):
             continue  # Skip unsupported entries
 
         # Add the entry to the list
-        print(mode)
         entry_data = f"{mode} {entry}\0".encode() + bytes.fromhex(sha1)
         tree_entries.append(entry_data)
 
     # Combine all entries into the tree data
     tree_data = b"".join(tree_entries)
     tree_object = f"tree {len(tree_data)}\0".encode() + tree_data
-    print(tree_data)
+    #print(tree_data)
     # Hash and store the tree object
     tree_sha1 = hash_object(tree_object, "tree")
     return tree_sha1
