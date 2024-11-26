@@ -28,8 +28,8 @@ def main():
             for entry in tree:
                 print(f"Mode: {entry['mode']}, Name: {entry['name']}, SHA1: {entry['sha1']}")
     elif command == "write-tree":
-        #write_tree_handler()
-        print(recursive_tree_hash_generation("."))
+        tree_hash = recursive_tree_hash_generation(".")
+        print(tree_hash)
     else:
         raise RuntimeError(f"Unknown command #{command}")
 
@@ -123,15 +123,15 @@ def recursive_read_tree_body(tree_body, entries):
 def create_blob(blob_path):
     with open(blob_path, "rt") as f:
         blob_content = f.read()
-        blob_object = b'blob '+str(len(blob_content)).encode()+b'\x00' + bytes(blob_content,"utf-8")
-        return blob_object
+        return b'blob '+str(len(blob_content)).encode()+b'\x00' + blob_content.encode()
+        
 
 def recursive_tree_hash_generation(start_path):
     tree_entries = []
     
     for entry in sorted(os.listdir(start_path)):
         entry_path = os.path.join(start_path, entry)
-        if entry_path == "./.git":
+        if entry_path == ".git":
             continue
 
         if os.path.isfile(entry_path):
