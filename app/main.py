@@ -28,7 +28,7 @@ def main():
             for entry in tree:
                 print(f"Mode: {entry['mode']}, Name: {entry['name']}, SHA1: {entry['sha1']}")
     elif command == "write-tree":
-        tree_hash = recursive_tree_hash_generation(".")
+        tree_hash = recursive_tree_hash_generation("./")
         print(tree_hash)
     else:
         raise RuntimeError(f"Unknown command #{command}")
