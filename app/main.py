@@ -146,15 +146,8 @@ def write_tree(path ,write =True):
         # For files, create a blob and return its SHA1 hash
         blob_data = create_blob(path)
         blob_sha1 = hashlib.sha1(blob_data).hexdigest()
-
-        if write:
-            # Write the blob to the .git/objects directory
-            blob_dir = f".git/objects/{blob_sha1[:2]}"
-            blob_path = f"{blob_dir}/{blob_sha1[2:]}"
-            os.makedirs(blob_dir, exist_ok=True)
-            with open(blob_path, "wb") as f:
-                f.write(zlib.compress(blob_data))
-
+        
+        write_object(blob_sha1, blob_data)
         return blob_sha1
 
     # Accumulate tree entries
@@ -176,9 +169,9 @@ def write_tree(path ,write =True):
 
         # Recursively process the entry and get its SHA1 hash
         sha1 = write_tree(full_path)
+
         # Add the entry to the tree (mode, name, and SHA1 in binary form)
-        tree_entries += f"{mode} {entry}\0".encode()
-        tree_entries += bytes.fromhex(sha1)
+        tree_entries += f"{mode} {entry}\0".encode() + bytes.fromhex(sha1)
 
     # Create the tree object
     tree_header = f"tree {len(tree_entries)}\0".encode()
@@ -186,9 +179,9 @@ def write_tree(path ,write =True):
     tree_sha1 = hashlib.sha1(tree_data).hexdigest()
 
     # Write the tree to the .git/objects directory
-    if write:
-        write_object(tree_sha1, tree_data)
+    write_object(tree_sha1, tree_data)
     return tree_sha1
+
 
 # Handles the 'commit-tree' command to create a commit object.
 def handle_commit_tree():
