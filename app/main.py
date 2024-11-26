@@ -127,34 +127,41 @@ def create_blob(file_path):
         
 # Recursively writes a tree object and returns its SHA1 hash.
 def write_tree(path):
+    if os.path.isfile(path):
+        # For files, create a blob and return its SHA1 hash
+        blob_data = create_blob(path)
+        return hash_object(blob_data, "blob")
+
+    # Accumulate tree entries
     tree_entries = []
 
-    # Sort directory contents, ensuring files are listed before directories
+    # Sort directory contents (files before directories)
     for entry in sorted(os.listdir(path)):
-        if entry == ".git":  # Skip .git directory
+        if entry == ".git":  # Skip the .git directory
             continue
         full_path = os.path.join(path, entry)
 
+        # Determine the mode and recursively process the entry
         if os.path.isfile(full_path):
-            mode = f"{REGULAR_FILE:o}"  # File mode for regular files
-            print(create_blob(full_path))
-            sha1 = hash_object(create_blob(full_path), "blob")  # Create blob and get its SHA1
+            mode = f"{REGULAR_FILE:o}"  # Mode for regular files
+            sha1 = write_tree(full_path)  # Hash blob and get its SHA1
         elif os.path.isdir(full_path):
-            mode = f"{DIRECTORY:o}"  # Directory mode
-            sha1 = write_tree(full_path)  # Recursively process directory
+            mode = f"{DIRECTORY:o}"  # Mode for directories
+            sha1 = write_tree(full_path)  # Recursively process the directory
         else:
             continue  # Skip unsupported entries
 
-        # Create a tree entry: "<mode> <filename>\0<binary SHA1>"
+        # Add the entry to the list
         entry_data = f"{mode} {entry}\0".encode() + bytes.fromhex(sha1)
         tree_entries.append(entry_data)
 
-    # Combine all entries into the tree object
+    # Combine all entries into the tree data
     tree_data = b"".join(tree_entries)
     tree_object = f"tree {len(tree_data)}\0".encode() + tree_data
 
     # Hash and store the tree object
-    return hash_object(tree_object, "tree")
+    tree_sha1 = hash_object(tree_object, "tree")
+    return tree_sha1
 
 # Hashes and stores a Git object.
 def hash_object(data, obj_type):
