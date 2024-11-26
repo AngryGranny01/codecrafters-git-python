@@ -215,20 +215,39 @@ def hash_object(data, obj_type):
 
 def handle_commit_tree():
     args = sys.argv
+    if len(args) < 4:
+        print("Invalid arguments. Usage: ./your_program.sh commit-tree <tree_sha> [-p <parent_sha>] -m <message>")
+        return
+
     if args[3] == "-m":
-        print("Do something")
+        # Case: Only a tree SHA and message are provided (no parent)
+        commit_tree_sha = args[2]
+        commit_message = " ".join(args[4:])
+        create_commit_tree(None, commit_tree_sha, None, commit_message)
     elif args[3] == "-p" and args[5] == "-m":
-        print("Do something else")
+        # Case: A parent SHA is also provided
+        commit_tree_sha = args[2]
+        parent_commit_sha = args[4]
+        commit_message = " ".join(args[6:])
+        
         for root, dirs, files in os.walk(directory_objects_path):
             for file in files:
                 file_path = os.path.join(root, file)
-        
+
                 with open(file_path, "rb") as f:
                     compressed_content = f.read()
-                if args[4].encode() in zlib.decompress(compressed_content):
-                    create_commit_tree(zlib.decompress(compressed_content), args[2], args[4], args[6])
+                    try:
+                        decompressed_content = zlib.decompress(compressed_content)
+                    except zlib.error:
+                        print(f"Error decompressing file: {file_path}")
+                        continue
+
+                if commit_tree_sha.encode() in decompressed_content and parent_commit_sha.encode() in decompressed_content:
+                    create_commit_tree(decompressed_content, commit_tree_sha, parent_commit_sha, commit_message)
+                    return
+        print("Matching parent and tree not found in objects.")
     else:
-        print("Command doesnt exist")
+        print("Command doesn't exist. Usage: ./your_program.sh commit-tree <tree_sha> [-p <parent_sha>] -m <message>")
 
 def create_commit_tree(parent_file,parent_tree_sha, commit_sha, message):
     # get author 
