@@ -251,7 +251,7 @@ def handle_commit_tree():
 
 def create_commit_tree(parent_file,parent_tree_sha, commit_sha, message):
     # get author 
-    print(parent_file)
+    print(parent_file.decode("utf-8"))
     print("Tree Sha: "+ parent_tree_sha)
     print(commit_sha)
     print(message)
