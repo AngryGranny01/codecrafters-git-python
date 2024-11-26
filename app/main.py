@@ -206,13 +206,16 @@ def hash_object(data, obj_type):
     header = f"{obj_type} {len(data)}\0".encode()
     full_data = header + data
     sha1_hash = hashlib.sha1(full_data).hexdigest()
+    write_object(sha1_hash, full_data)
+    return sha1_hash
+
+def write_object(sha1_hash, data):
     object_dir = os.path.join(directory_objects_path, sha1_hash[:2])
     os.makedirs(object_dir, exist_ok=True)
     object_path = os.path.join(object_dir, sha1_hash[2:])
     if not os.path.exists(object_path):
         with open(object_path, "wb") as f:
-            f.write(zlib.compress(full_data))
-    return sha1_hash
+            f.write(zlib.compress(data))
 
 def handle_commit_tree():
     args = sys.argv
@@ -269,7 +272,8 @@ def create_commit_tree(
         commit += message + "\n"
     
     sha1 = hashlib.sha1(commit.encode()).hexdigest()
-    print(sha1)
+    
+    write_object(sha1, commit)
 
 if __name__ == "__main__":
     main()
