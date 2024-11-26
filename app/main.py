@@ -29,7 +29,7 @@ def main():
                 print(f"Mode: {entry['mode']}, Name: {entry['name']}, SHA1: {entry['sha1']}")
     elif command == "write-tree":
         #write_tree_handler()
-        recursive_tree_hash_generation(".")
+        print(recursive_tree_hash_generation("."))
     else:
         raise RuntimeError(f"Unknown command #{command}")
 
@@ -140,7 +140,6 @@ def recursive_tree_hash_generation(startPath):
             mode = REGULAR_FILE
         elif os.path.isdir(entry_path):
             sha1 = recursive_tree_hash_generation(entry_path)
-            print(sha1)
             mode = DIRECTORY
         else:
             continue # Skip unsupported entries
