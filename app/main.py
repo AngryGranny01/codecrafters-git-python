@@ -127,34 +127,31 @@ def create_blob(file_path):
         
 # Recursively writes a tree object and returns its SHA1 hash.
 def write_tree(path):
-    if os.path.isfile(path):
-        return hash_object(create_blob(path), "blob")
-    
     tree_entries = []
 
-    # Process directory contents, sorting files before directories
+    # Sort directory contents, ensuring files are listed before directories
     for entry in sorted(os.listdir(path)):
         if entry == ".git":  # Skip .git directory
             continue
         full_path = os.path.join(path, entry)
-        
+
         if os.path.isfile(full_path):
-            mode = f"{REGULAR_FILE:o}"  # File mode
-            sha1 = write_tree(full_path)  # Create blob and get its SHA1
+            mode = f"{REGULAR_FILE:o}"  # File mode for regular files
+            sha1 = hash_object(create_blob(full_path), "blob")  # Create blob and get its SHA1
         elif os.path.isdir(full_path):
             mode = f"{DIRECTORY:o}"  # Directory mode
             sha1 = write_tree(full_path)  # Recursively process directory
         else:
             continue  # Skip unsupported entries
-        
+
         # Create a tree entry: "<mode> <filename>\0<binary SHA1>"
         entry_data = f"{mode} {entry}\0".encode() + bytes.fromhex(sha1)
         tree_entries.append(entry_data)
-    
+
     # Combine all entries into the tree object
     tree_data = b"".join(tree_entries)
     tree_object = f"tree {len(tree_data)}\0".encode() + tree_data
-    
+
     # Hash and store the tree object
     return hash_object(tree_object, "tree")
 
