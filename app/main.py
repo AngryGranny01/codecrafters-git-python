@@ -125,8 +125,7 @@ def create_blob(blob_path):
         blob_content = f.read()
     header = f"blob {len(blob_content)}\0".encode("utf-8")
     blob = header + blob_content
-    sha1 = hashlib.sha1(blob).hexdigest
-    return sha1
+    return blob  # Return the complete blob data
         
 
 def recursive_tree_hash_generation(start_path):
