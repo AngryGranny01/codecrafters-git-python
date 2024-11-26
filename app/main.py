@@ -126,11 +126,16 @@ def create_blob(file_path):
     return header + blob_content
         
 # Recursively writes a tree object and returns its SHA1 hash.
-def write_tree(path):
+def write_tree(path ,write =True):
     if os.path.isfile(path):
         # For files, create a blob and return its SHA1 hash
         blob_data = create_blob(path)
-        return hash_object(blob_data, "blob")
+        blob_sha1 = hashlib.sha1(blob_data).hexdigest()
+        if write:
+            os.makedirs(f".git/objects/{blob_sha1[:2]}", exist_ok=True)
+            with open(f".git/objects/{blob_sha1[:2]}/{blob_sha1[2:]}", "wb") as f:
+                f.write(zlib.compress(blob_data))
+        return blob_sha1
 
     # Accumulate tree entries
     tree_entries = b""
