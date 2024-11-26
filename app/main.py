@@ -39,34 +39,24 @@ def initialize_git_directory():
 
 # Handles the 'cat-file' command to display content of a Git object.
 def cat_file_handler():
-    args = sys.argv
-    object_hash = args[2]
-    object_path = os.path.join(directory_objects_path, object_hash[:2], object_hash[2:])
-    if not os.path.exists(object_path):
-        print(f"Object {object_hash} does not exist.")
-        return
+    for root, dirs, files in os.walk(directory_objects_path):
+        for file in files:
+            file_path = os.path.join(root, file)
+        
+            with open(file_path, "rb") as f:
+                compressed_content = f.read()
 
-    with open(object_path, "rb") as f:
-        compressed_content = f.read()
+                content = zlib.decompress(compressed_content)
+                result = content.decode("utf-8").split("\x00")
+                output.write(result[1])
 
-    content = zlib.decompress(compressed_content)
-    print(content.decode("utf-8", errors="replace"))
-    
 # Handles the 'hash-object' command to hash and store a file as a blob.
 def hash_object_handler(content_path):
     uncompressed_content = create_blob(content_path)
     # Compute hash
     compressed_content = hashlib.sha1(uncompressed_content).hexdigest()
+    write_object(compressed_content, uncompressed_content)
     print(compressed_content)
-    if compressed_content:
-        object_dir = os.path.join(directory_objects_path,compressed_content[0:2])
-        # Ensure the parent directory exists
-        os.makedirs(object_dir, exist_ok=True)
-        blub_path=str(compressed_content[0:2])+'/'+str(compressed_content[2:])
-        new_directory_path = os.path.join(directory_objects_path, blub_path) 
-        if not os.path.exists(new_directory_path):
-            with open(new_directory_path, 'wb') as f:
-                f.write(zlib.compress(uncompressed_content))
 
 
 # Handles the 'ls-tree' command to list the contents of a tree object.
