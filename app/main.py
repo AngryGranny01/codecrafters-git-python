@@ -219,7 +219,6 @@ def handle_commit_tree():
         print("Do something")
     elif args[3] == "-p" and args[5] == "-m":
         print("Do something else")
-        create_commit_tree(args[2], args[4], args[6])
         for root, dirs, files in os.walk(directory_objects_path):
             for file in files:
                 file_path = os.path.join(root, file)
