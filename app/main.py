@@ -157,7 +157,6 @@ def write_tree(path):
 
     # Combine all entries into the tree data
     tree_data = b"".join(tree_entries)
-    print(tree_data)
     # Hash and store the tree object
     tree_sha1 = hash_object(tree_data, "tree")
     return tree_sha1
