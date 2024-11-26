@@ -215,13 +215,15 @@ def handle_commit_tree():
         # Only a tree SHA and message are provided
         tree_sha = args[2]
         commit_message = " ".join(args[4:])
-        create_commit_tree(tree_sha, commit_message)
+        commit_sha1 = create_commit_tree(tree_sha, commit_message)
+        print(commit_sha1)
     elif args[3] == "-p" and args[5] == "-m":
         # A parent SHA is also provided
         tree_sha = args[2]
         parent_sha = args[4]
         commit_message = " ".join(args[6:])
-        create_commit_tree(tree_sha, commit_message, parent_sha)
+        commit_sha1 = create_commit_tree(tree_sha, commit_message, parent_sha)
+        print(commit_sha1)
     else:
         print("Command doesn't exist. Usage: ./your_program.sh commit-tree <tree_sha> [-p <parent_sha>] -m <message>")
 
@@ -245,15 +247,13 @@ def create_commit_tree(
         commit += f"committer {committer} {timestamp} {timezone}\n\n"
         commit += message + "\n"
 
-    print(commit)
     # Calculate SHA1 hash of the commit object
     sha1 = hashlib.sha1(commit.encode()).hexdigest()
 
     # Write the commit object
     write_object(sha1, commit.encode())
 
-    # Output the commit hash
-    print(f"Created commit: {sha1}")
+    return sha1
 
 if __name__ == "__main__":
     main()
