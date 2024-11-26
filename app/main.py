@@ -258,7 +258,7 @@ def create_commit_tree(
         commit += message + "\n"
     
     sha1 = hashlib.sha1(commit.encode()).hexdigest()
-    
+    print(sha1)
     write_object(sha1, commit)
 
 if __name__ == "__main__":
