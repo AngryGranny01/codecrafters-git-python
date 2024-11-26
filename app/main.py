@@ -55,13 +55,20 @@ def hash_object_handler(content_path):
 
 # Handles the 'ls-tree' command to list the contents of a tree object.
 def handle_ls_tree():
-    """Handles the 'ls-tree' command to list the contents of a tree object."""
-    tree_hash = sys.argv[2]
+    args = sys.argv[2:]
+    tree_hash = args[0]  # First argument is the tree hash
+    name_only = "--name-only" in args  # Check for the presence of '--name-only'
+
+    # Read the tree object
     tree = read_tree(tree_hash)
-    if "--name-only" in sys.argv:
+    
+    # Display the tree contents
+    if name_only:
+        # Only print names if '--name-only' is specified
         for entry in tree:
             print(entry["name"])
     else:
+        # Print detailed tree entry information
         for entry in tree:
             print(f"Mode: {entry['mode']}, Name: {entry['name']}, SHA1: {entry['sha1']}")
 
@@ -131,7 +138,7 @@ def write_tree(path ,write =True):
         # For files, create a blob and return its SHA1 hash
         blob_data = create_blob(path)
         blob_sha1 = hashlib.sha1(blob_data).hexdigest()
-        
+
         if write:
             # Write the blob to the .git/objects directory
             blob_dir = f".git/objects/{blob_sha1[:2]}"
