@@ -219,18 +219,21 @@ def handle_commit_tree():
         print("Do something")
     elif args[3] == "-p" and args[5] == "-m":
         print("Do something else")
-        commit_tree(args[2], args[4], args[6])
+        create_commit_tree(args[2], args[4], args[6])
         for root, dirs, files in os.walk(directory_objects_path):
             for file in files:
                 file_path = os.path.join(root, file)
         
                 with open(file_path, "rb") as f:
                     compressed_content = f.read()
-                print(zlib.decompress(compressed_content))
+                if args[4] in zlib.decompress(compressed_content):
+                    create_commit_tree(file, args[2], args[4], args[6])
     else:
         print("Command doesnt exist")
 
-def commit_tree(parent_tree_sha, commit_sha, message):
+def create_commit_tree(parent_file,parent_tree_sha, commit_sha, message):
+    # get author 
+    print(parent_file)
     print(parent_tree_sha)
     print(commit_sha)
     print(message)
