@@ -260,12 +260,13 @@ def create_commit_tree(
     timestamp = time.time()
     timezone = "+0000"
 
-    commit = f""
+    commit = f"tree {tree_sha}\n"
 
     if parent_sha:
         commit += f"parent {parent_sha}\n"
         commit += f"author {author} {timestamp} {timezone}\n"
-        commit += f"commiter {committer} {timestamp} {timezone}"
+        commit += f"commiter {committer} {timestamp} {timezone}\n\n"
+        commit += message + "\n"
     
     sha1 = hashlib.sha1(commit.encode()).hexdigest()
     print(sha1)
