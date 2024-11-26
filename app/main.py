@@ -152,6 +152,7 @@ def write_tree(path):
             continue  # Skip unsupported entries
 
         # Add the entry to the list
+        print(mode)
         entry_data = f"{mode} {entry}\0".encode() + bytes.fromhex(sha1)
         tree_entries.append(entry_data)
 
