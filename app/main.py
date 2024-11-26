@@ -28,6 +28,7 @@ def main():
             for entry in tree:
                 print(f"Mode: {entry['mode']}, Name: {entry['name']}, SHA1: {entry['sha1']}")
     elif command == "write-tree":
+        #write_tree_handler()
         recursive_tree_hash_generation(".")
     else:
         raise RuntimeError(f"Unknown command #{command}")
@@ -125,6 +126,9 @@ def create_blub(blub_path):
         blob_object = b'blob '+str(len(blob_content)).encode()+b'\x00' + bytes(blob_content,"utf-8")
         return blob_object
 
+#def write_tree_handler(directory):
+
+
 def recursive_tree_hash_generation(startPath):
     tree_entries = []
     for entry in sorted(os.listdir(startPath)):
@@ -139,6 +143,7 @@ def recursive_tree_hash_generation(startPath):
             mode = REGULAR_FILE
         elif os.path.isdir(entry_path):
             sha1 = recursive_tree_hash_generation(entry_path)
+            print(sha1)
             mode = DIRECTORY
         else:
             continue # Skip unsupported entries
