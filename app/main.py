@@ -56,7 +56,7 @@ def hash_object_handler(content_path):
         uncompressed_content = create_blub(content_path)
         # Compute hash
         compressed_content = hashlib.sha1(uncompressed_content).hexdigest()
-        print(compressed_content)
+
         if compressed_content:
             object_dir = os.path.join(directory_objects_path,compressed_content[0:2])
             # Ensure the parent directory exists
@@ -135,7 +135,6 @@ def recursive_tree_hash_generation(startPath):
         elif os.path.isfile(entry_path):          
             uncompressed_blob = create_blub(entry_path)
             # Compute hash
-            print(uncompressed_blob)
             sha1 = hashlib.sha1(uncompressed_blob).hexdigest()
             mode = REGULAR_FILE
         elif os.path.isdir(entry_path):
