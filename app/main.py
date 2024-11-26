@@ -126,9 +126,6 @@ def create_blub(blub_path):
         blob_object = b'blob '+str(len(blob_content)).encode()+b'\x00' + bytes(blob_content,"utf-8")
         return blob_object
 
-#def write_tree_handler(directory):
-
-
 def recursive_tree_hash_generation(startPath):
     tree_entries = []
     for entry in sorted(os.listdir(startPath)):
@@ -151,7 +148,19 @@ def recursive_tree_hash_generation(startPath):
     
         # create the tree object
         tree_data = b"".join(tree_entries)
-        print(tree_data)
+        return hash_object(tree_data, "tree")
+    
+def hash_object(data, obj_type):
+    header = f"{obj_type} {len(data)}\0".encode()
+    full_data = header + data
+    sha1_hash = hashlib.sha1(full_data).hexdigest()
+    object_dir = os.path.join(directory_objects_path, sha1_hash[:2])
+    os.makedirs(object_dir, exist_ok=True)
+    object_path = os.path.join(object_dir, sha1_hash[2:])
+    if not os.path.exists(object_path):
+        with open(object_path, "wb") as f:
+            f.write(zlib.compress(full_data))
+    return sha1_hash
 
 if __name__ == "__main__":
     main()
