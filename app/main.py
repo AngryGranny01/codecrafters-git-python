@@ -133,7 +133,7 @@ def write_tree(path):
         return hash_object(blob_data, "blob")
 
     # Accumulate tree entries
-    tree_entries = []
+    tree_entries = b""
 
     # Sort directory contents (files before directories)
     for entry in sorted(os.listdir(path)):
@@ -143,22 +143,22 @@ def write_tree(path):
 
         # Determine the mode and recursively process the entry
         if os.path.isfile(full_path):
-            mode = f"{REGULAR_FILE}"  # Mode for regular files
-            sha1 = write_tree(full_path)  # Hash blob and get its SHA1
+            tree_entries += f"100644 {entry}\0".encode()
         elif os.path.isdir(full_path):
-            mode = f"{DIRECTORY}"  # Mode for directories
-            sha1 = write_tree(full_path)  # Recursively process the directory
+            tree_entries += f"40000 {entry}\0".encode()
         else:
             continue  # Skip unsupported entries
+        sha1 = write_tree(full_path)  # Recursively process the directory
+        tree_entries += sha1
+    
+    tree_entries = f"tree {len(tree_entries)}\0".encode()+tree_entries
 
-        # Add the entry to the list
-        entry_data = f"{mode} {entry}\0".encode() + bytes.fromhex(sha1)
-        tree_entries.append(entry_data)
+    tree_sha1 = hashlib.sha1(tree_entries).hexdigest()
 
-    # Combine all entries into the tree data
-    tree_data = b"".join(tree_entries)
-    # Hash and store the tree object
-    tree_sha1 = hash_object(tree_data, "tree")
+    os.makedirs(f".git/objects/{sha1[:2]}", exist_ok=True)
+    with open(f".git/objects/{sha1[:2]}/{sha1[2:]}", "wb") as f:
+        f.write(zlib.compress(tree_entries))
+
     return tree_sha1
 
 # Hashes and stores a Git object.
