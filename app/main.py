@@ -216,7 +216,7 @@ def hash_object(data, obj_type):
 def handle_commit_tree():
     if sys.argv[3] == "-m":
         print("Do something")
-    elif sys.argv[3] == "-p" & sys.argv[5] == "-m":
+    elif sys.argv[3] == "-p" and sys.argv[5] == "-m":
         print("Do something else")
     else:
         print("Command doesnt exist")
