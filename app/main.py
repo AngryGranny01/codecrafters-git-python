@@ -39,17 +39,19 @@ def initialize_git_directory():
 
 # Handles the 'cat-file' command to display content of a Git object.
 def cat_file_handler():
-    for root, dirs, files in os.walk(directory_objects_path):
-        for file in files:
-            file_path = os.path.join(root, file)
-        
-            with open(file_path, "rb") as f:
-                compressed_content = f.read()
+    args = sys.argv
+    object_hash = args[2]
+    object_path = os.path.join(directory_objects_path, object_hash[:2], object_hash[2:])
+    if not os.path.exists(object_path):
+        print(f"Object {object_hash} does not exist.")
+        return
 
-                content = zlib.decompress(compressed_content)
-                result = content.decode("utf-8").split("\x00")
-                output.write(result[1])
+    with open(object_path, "rb") as f:
+        compressed_content = f.read()
 
+    content = zlib.decompress(compressed_content)
+    print(content.decode("utf-8", errors="replace"))
+    
 # Handles the 'hash-object' command to hash and store a file as a blob.
 def hash_object_handler(content_path):
     uncompressed_content = create_blob(content_path)
